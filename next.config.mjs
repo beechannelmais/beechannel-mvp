@@ -1,2 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig={experimental:{typedRoutes:true,turbo:{}},images:{remotePatterns:[{protocol:'https',hostname:'images.unsplash.com'},{protocol:'https',hostname:'picsum.photos'},{protocol:'https',hostname:'i.ytimg.com'}]}};export default nextConfig;
+const nextConfig = {
+  experimental: {
+    // Desativa as rotas tipadas que estão causando erro na Vercel
+    typedRoutes: false,
+  },
+};
+
+export default nextConfig;
