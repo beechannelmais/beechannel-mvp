@@ -1,3 +1,36 @@
 'use client';
-import Nav from '@/components/Nav'; import { useSearchParams } from 'next/navigation'; import { listProfiles } from '@/lib/profiles'; import type { Profile } from '@/lib/types'; import { CATALOG, categories } from '@/lib/catalog'; import VideoCard from '@/components/VideoCard'; import { getWatchLater } from '@/lib/watchlater'; import { getProgress } from '@/lib/progress';
-export default function CatalogPage(){ const params=useSearchParams(); const profileId=params.get('profile'); const profile:Profile|null=profileId?(listProfiles().find(p=>p.id===profileId)||null):null; const wl=profile?new Set(getWatchLater(profile)):new Set<string>(); const progress=profile?getProgress(profile):{}; const contWatching=CATALOG.filter(v=>progress[v.id]&&progress[v.id]>5); return (<main><Nav/><div className="container py-6 space-y-8"><div className="flex items-center justify-between"><h1 className="text-2xl font-bold">Vitrine</h1>{profile&&<span className="text-white/70">Perfil: {profile.name} {profile.avatar}</span>}</div>{profile&&contWatching.length>0&&(<section><h2 className="text-xl font-semibold mb-3">Continuar assistindo</h2><div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">{contWatching.map(v=><VideoCard key={v.id} v={v}/>)}</div></section>)}{profile&&wl.size>0&&(<section><h2 className="text-xl font-semibold mb-3">Assistir mais tarde</h2><div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">{CATALOG.filter(v=>wl.has(v.id)).map(v=><VideoCard key={v.id} v={v}/>)}</div></section>)}{categories().map(cat=>(<section key={cat}><h2 className="text-xl font-semibold mb-3">{cat}</h2><div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">{CATALOG.filter(v=>v.category===cat).map(v=><VideoCard key={v.id} v={v}/>)}</div></section>))}</div></main>);}
+export const dynamic = 'force-dynamic';
+
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+
+function CatalogContent() {
+  const search = useSearchParams();
+  const q = search.get('q') ?? '';
+
+  return (
+    <main className="container py-8">
+      <h1 className="text-2xl font-bold text-white mb-4">
+        Catálogo de Filmes
+      </h1>
+      <p className="text-gray-400 mb-6">
+        Resultados para: <span className="font-semibold">{q}</span>
+      </p>
+
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="bg-gray-800 rounded-xl p-4">Filme 1</div>
+        <div className="bg-gray-800 rounded-xl p-4">Filme 2</div>
+        <div className="bg-gray-800 rounded-xl p-4">Filme 3</div>
+        <div className="bg-gray-800 rounded-xl p-4">Filme 4</div>
+      </div>
+    </main>
+  );
+}
+
+export default function CatalogPage() {
+  return (
+    <Suspense fallback={<div className="container py-8">Carregando…</div>}>
+      <CatalogContent />
+    </Suspense>
+  );
+}
