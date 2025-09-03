@@ -1,0 +1,3 @@
+'use client';
+import Link from 'next/link'; import type { Video } from '@/lib/types';
+export default function VideoCard({v}:{v:Video}){ return (<Link href={`/watch/${v.id}`} className="card hover:scale-[1.01] transition block"><div className="relative w-full aspect-video rounded-xl overflow-hidden mb-2"><img src={v.thumb} alt={v.title} className="w-full h-full object-cover"/></div><div className="flex items-center justify-between"><div><h3 className="font-semibold">{v.title}</h3><p className="text-sm text-white/60 line-clamp-2">{v.description}</p></div><span className="text-xs text-white/40 border border-white/10 rounded px-2 py-1">{v.category}</span></div></Link>);}

@@ -1,0 +1,1 @@
+export type User={name:string;email:string};export type Plan={id:'basic'|'standard'|'premium';screens:number;name:string;price:string};export type Profile={id:string;name:string;avatar:string};export type Video={id:string;title:string;description:string;category:string;thumb:string;url:string;durationSec:number};
