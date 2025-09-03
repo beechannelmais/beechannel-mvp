@@ -1,3 +1,46 @@
 'use client';
-import { useParams, useSearchParams } from 'next/navigation'; import Nav from '@/components/Nav'; import { CATALOG } from '@/lib/catalog'; import { listProfiles } from '@/lib/profiles'; import type { Profile } from '@/lib/types'; import { hasWatchLater, toggleWatchLater } from '@/lib/watchlater'; import { getProgress, setProgress } from '@/lib/progress'; import { overLimit, startSession, heartbeat, endSession } from '@/lib/sessions'; import { useEffect, useRef, useState } from 'react'; import Link from 'next/link';
-export default function WatchPage(){ const { id } = useParams<{ id: string }>(); const params=useSearchParams(); const profileId=params.get('profile'); const profile:Profile|null=profileId?(listProfiles().find(p=>p.id===profileId)||null):null; const v=CATALOG.find(x=>x.id===id); const videoRef=useRef<HTMLVideoElement>(null); const [limit,setLimit]=useState(overLimit()); useEffect(()=>{ startSession(); const t=setInterval(()=>{ heartbeat(); setLimit(overLimit()); },3000); window.addEventListener('beforeunload', endSession); return ()=>{ clearInterval(t); endSession(); }; },[]); useEffect(()=>{ if(!videoRef.current||!profile) return; const progress=getProgress(profile); const last=progress[id]; if(last&&last>5){ videoRef.current.currentTime=last; } },[profile,id]); useEffect(()=>{ const vEl=videoRef.current; if(!vEl||!profile) return; const onTime=()=>setProgress(profile,id,Math.floor(vEl.currentTime)); vEl.addEventListener('timeupdate',onTime); return ()=>vEl.removeEventListener('timeupdate',onTime); },[profile,id]); if(!v) return <div className="container py-10">Vídeo não encontrado.</div>; const watchLater=profile?hasWatchLater(profile,v.id):false; return (<main><Nav/><div className="container py-6 space-y-4"><div className="flex items-center justify-between"><div><h1 className="text-2xl font-bold">{v.title}</h1><p className="text-white/70">{v.description}</p></div><div className="flex gap-2">{profile&&(<button className="btn-outline" onClick={()=>{ toggleWatchLater(profile,v.id); location.reload(); }}>{watchLater?'Remover da lista':'Assistir mais tarde'}</button>)}<Link className="btn" href={`/catalog${profile?`?profile=${profile.id}`:''}`}>Voltar</Link></div></div>{limit.over&&(<div className="card border-red-400/40"><div className="text-red-300 font-semibold">Limite de sessões ativas excedido</div><div className="text-white/70">Foram detectadas {limit.count} telas ativas, e seu plano permite {limit.allowed}. Feche outras abas/app para assistir.</div></div>)}<div className="card"><video ref={videoRef} className="w-full rounded-xl" src={v.url} controls preload="metadata"/></div></div></main>);}
+
+import Link from 'next/link';
+import { useParams, useSearchParams } from 'next/navigation';
+
+export default function WatchPage() {
+  // Lê o :id da URL com segurança
+  const params = useParams<{ id?: string | string[] }>();
+  const raw = params?.id;
+  const id =
+    typeof raw === 'string' ? raw : Array.isArray(raw) ? raw[0] : '';
+
+  // Parâmetros opcionais (ex.: ?title=Algum+filme)
+  const search = useSearchParams();
+  const title = search.get('title') ?? 'Assistir';
+
+  return (
+    <main className="container py-8">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">{title}</h1>
+
+        {/* Link estático para evitar erro de typed routes */}
+        <Link className="btn-outline" href="/catalog">
+          ← Voltar para a vitrine
+        </Link>
+      </div>
+
+      {/* Placeholder simples para o player (evita imports que possam quebrar no build) */}
+      <div className="card p-6">
+        <p className="text-white/70 mb-4">
+          Reproduzindo conteúdo ID: <span className="font-mono">{id}</span>
+        </p>
+
+        {/* Se quiser um vídeo real, troque o src abaixo por um arquivo seu em /public/videos */}
+        <video
+          controls
+          className="w-full rounded-xl"
+          // Exemplo: coloque um arquivo em public/videos/demo.mp4 e mude o src para "/videos/demo.mp4"
+          src=""
+        >
+          Seu navegador não suporta vídeo.
+        </video>
+      </div>
+    </main>
+  );
+}
