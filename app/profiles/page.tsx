@@ -1,79 +1,75 @@
-'use client';
-export const dynamic = 'force-dynamic';
+"use client";
+import { useState } from "react";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+interface Profile {
+  id: number;
+  name: string;
+  avatar: string;
+}
 
 export default function ProfilesPage() {
-  const router = useRouter();
-  const goCatalog = () => router.push('/catalog');
+  const [profiles, setProfiles] = useState<Profile[]>([
+    { id: 1, name: "Novo perfil", avatar: "😊" },
+  ]);
+
+  const addProfile = () => {
+    const newProfile: Profile = {
+      id: Date.now(),
+      name: "Novo perfil",
+      avatar: "😊",
+    };
+    setProfiles([...profiles, newProfile]);
+  };
+
+  const removeProfile = (id: number) => {
+    setProfiles(profiles.filter((p) => p.id !== id));
+  };
 
   return (
-    <main className="container py-8">
-      <h1 className="text-2xl font-extrabold mb-8">Quem está assistindo?</h1>
+    <main className="flex flex-col items-center min-h-screen bg-black text-white p-6">
+      {/* Título centralizado */}
+      <h1 className="text-2xl font-bold mb-8 text-center">
+        Quem está assistindo?
+      </h1>
 
-      {/* GRID DOS CARDS */}
-      <div className="mx-auto max-w-3xl grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* CARD: PERFIL EXISTENTE */}
-        <div className="card p-6 rounded-2xl">
-          <div className="flex flex-col items-center text-center">
-            {/* ícone menor e centralizado */}
-            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-surface-300/60 grid place-items-center border border-white/10 shadow-soft">
-              <span className="text-3xl sm:text-4xl">😊</span>
-            </div>
-            <div className="mt-3 text-sm font-semibold">Novo perfil</div>
-          </div>
-
-          {/* BOTÕES organizados, sem sobrepor o card */}
-          <div className="mt-5 space-y-3">
-            <button onClick={goCatalog} className="btn w-full">
+      {/* Container dos perfis */}
+      <div className="grid grid-cols-2 gap-6">
+        {profiles.map((profile) => (
+          <div
+            key={profile.id}
+            className="bg-neutral-900 rounded-xl p-6 flex flex-col items-center shadow-md"
+          >
+            <div className="text-6xl mb-4">{profile.avatar}</div>
+            <p className="text-lg font-semibold mb-4">{profile.name}</p>
+            <button className="px-4 py-2 bg-yellow-500 text-black font-bold rounded-lg mb-2">
               Entrar
             </button>
-            <div className="grid grid-cols-2 gap-3">
-              <Link href="/profiles/manage" className="btn-outline text-center">
-                Editar
-              </Link>
-              <button className="btn-outline">Excluir</button>
-            </div>
+            <button className="px-4 py-2 bg-gray-700 text-white rounded-lg mb-2">
+              Editar
+            </button>
+            <button
+              onClick={() => removeProfile(profile.id)}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg"
+            >
+              Excluir
+            </button>
           </div>
-        </div>
+        ))}
 
-        {/* CARD: ADICIONAR PERFIL */}
-        <Link
-          href="/profiles/new" /* ajuste se sua rota de criação for outra */
-          className="card p-6 rounded-2xl hover:border-brand-500 transition"
+        {/* Botão adicionar perfil */}
+        <div
+          onClick={addProfile}
+          className="bg-neutral-800 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-neutral-700"
         >
-          <div className="flex flex-col items-center text-center">
-            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-surface-300/40 border border-white/10 grid place-items-center shadow-soft">
-              {/* ícone + discreto */}
-              <svg
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="opacity-80"
-              >
-                <path
-                  d="M12 5v14M5 12h14"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-            <div className="mt-3 text-sm font-semibold text-white/80">
-              Adicionar perfil
-            </div>
-          </div>
-        </Link>
+          <div className="text-6xl mb-4">＋</div>
+          <p className="text-lg">Adicionar perfil</p>
+        </div>
       </div>
 
-      {/* CTA para ir à vitrine sem perfil */}
-      <div className="mx-auto max-w-3xl mt-8">
-        <Link href="/catalog" className="btn w-full">
-          Ir para a vitrine (sem perfil)
-        </Link>
-      </div>
+      {/* Botão para vitrine */}
+      <button className="mt-12 px-6 py-3 bg-yellow-500 text-black font-bold rounded-lg">
+        Ir para a vitrine (sem perfil)
+      </button>
     </main>
   );
 }
