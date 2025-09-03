@@ -6,61 +6,49 @@ import { useRouter } from 'next/navigation';
 
 export default function ProfilesPage() {
   const router = useRouter();
-
-  const handleEnter = () => router.push('/catalog');
-  const handleEdit = () => router.push('/profiles/manage'); // ajuste se tiver outra rota
-  const handleDelete = () => alert('Exemplo: aqui irá a ação de excluir perfil');
+  const goCatalog = () => router.push('/catalog');
 
   return (
-    <main className="container py-10">
-      <h1 className="text-2xl font-bold mb-8">Quem está assistindo?</h1>
+    <main className="container py-8">
+      <h1 className="text-2xl font-extrabold mb-8">Quem está assistindo?</h1>
 
       {/* GRID DOS CARDS */}
-      <div className="grid grid-cols-2 gap-6 max-w-[700px]">
+      <div className="mx-auto max-w-3xl grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* CARD: PERFIL EXISTENTE */}
         <div className="card p-6 rounded-2xl">
-          <div className="flex flex-col items-center">
-            {/* avatar/emoji menor e centralizado */}
-            <div className="h-20 w-20 rounded-full bg-surface-300/60 grid place-items-center border border-white/10 shadow-soft">
-              <span className="text-4xl">😊</span>
+          <div className="flex flex-col items-center text-center">
+            {/* ícone menor e centralizado */}
+            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-surface-300/60 grid place-items-center border border-white/10 shadow-soft">
+              <span className="text-3xl sm:text-4xl">😊</span>
             </div>
-            <div className="mt-3 text-center text-sm font-medium">Novo perfil</div>
+            <div className="mt-3 text-sm font-semibold">Novo perfil</div>
           </div>
 
-          {/* BOTÕES – organizados embaixo, sem sobrepor o card */}
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={handleEnter}
-              className="px-4 py-2 rounded-xl bg-brand-500 text-black font-medium hover:bg-brand-400 transition"
-            >
+          {/* BOTÕES organizados, sem sobrepor o card */}
+          <div className="mt-5 space-y-3">
+            <button onClick={goCatalog} className="btn w-full">
               Entrar
             </button>
-            <button
-              onClick={handleEdit}
-              className="px-4 py-2 rounded-xl border border-white/20 text-white/90 hover:border-brand-500 hover:text-brand-500 transition"
-            >
-              Editar
-            </button>
-            <button
-              onClick={handleDelete}
-              className="px-4 py-2 rounded-xl border border-white/20 text-white/90 hover:border-brand-500 hover:text-brand-500 transition"
-            >
-              Excluir
-            </button>
+            <div className="grid grid-cols-2 gap-3">
+              <Link href="/profiles/manage" className="btn-outline text-center">
+                Editar
+              </Link>
+              <button className="btn-outline">Excluir</button>
+            </div>
           </div>
         </div>
 
         {/* CARD: ADICIONAR PERFIL */}
         <Link
-          href="/profiles/new" // ajuste se sua rota de criação for outra
+          href="/profiles/new" /* ajuste se sua rota de criação for outra */
           className="card p-6 rounded-2xl hover:border-brand-500 transition"
         >
-          <div className="flex flex-col items-center">
-            <div className="h-20 w-20 rounded-full bg-surface-300/40 border border-white/10 grid place-items-center shadow-soft">
+          <div className="flex flex-col items-center text-center">
+            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-surface-300/40 border border-white/10 grid place-items-center shadow-soft">
               {/* ícone + discreto */}
               <svg
-                width="30"
-                height="30"
+                width="28"
+                height="28"
                 viewBox="0 0 24 24"
                 fill="none"
                 className="opacity-80"
@@ -73,7 +61,7 @@ export default function ProfilesPage() {
                 />
               </svg>
             </div>
-            <div className="mt-3 text-center text-sm font-medium text-white/80">
+            <div className="mt-3 text-sm font-semibold text-white/80">
               Adicionar perfil
             </div>
           </div>
@@ -81,11 +69,8 @@ export default function ProfilesPage() {
       </div>
 
       {/* CTA para ir à vitrine sem perfil */}
-      <div className="max-w-[700px] mt-8">
-        <Link
-          href="/catalog"
-          className="inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 bg-brand-500 text-black font-medium hover:bg-brand-400 transition"
-        >
+      <div className="mx-auto max-w-3xl mt-8">
+        <Link href="/catalog" className="btn w-full">
           Ir para a vitrine (sem perfil)
         </Link>
       </div>
