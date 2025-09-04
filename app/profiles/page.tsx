@@ -1,75 +1,43 @@
 "use client";
-import { useState } from "react";
 
-interface Profile {
-  id: number;
-  name: string;
-  avatar: string;
-}
+import Link from "next/link";
 
 export default function ProfilesPage() {
-  const [profiles, setProfiles] = useState<Profile[]>([
-    { id: 1, name: "Novo perfil", avatar: "😊" },
-  ]);
-
-  const addProfile = () => {
-    const newProfile: Profile = {
-      id: Date.now(),
-      name: "Novo perfil",
-      avatar: "😊",
-    };
-    setProfiles([...profiles, newProfile]);
-  };
-
-  const removeProfile = (id: number) => {
-    setProfiles(profiles.filter((p) => p.id !== id));
-  };
-
   return (
-    <main className="flex flex-col items-center min-h-screen bg-black text-white p-6">
+    <main className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-6">
       {/* Título centralizado */}
-      <h1 className="text-2xl font-bold mb-8 text-center">
+      <h1 className="text-2xl font-bold text-center mb-8">
         Quem está assistindo?
       </h1>
 
-      {/* Container dos perfis */}
-      <div className="grid grid-cols-2 gap-6">
-        {profiles.map((profile) => (
-          <div
-            key={profile.id}
-            className="bg-neutral-900 rounded-xl p-6 flex flex-col items-center shadow-md"
-          >
-            <div className="text-6xl mb-4">{profile.avatar}</div>
-            <p className="text-lg font-semibold mb-4">{profile.name}</p>
-            <button className="px-4 py-2 bg-yellow-500 text-black font-bold rounded-lg mb-2">
-              Entrar
-            </button>
-            <button className="px-4 py-2 bg-gray-700 text-white rounded-lg mb-2">
-              Editar
-            </button>
-            <button
-              onClick={() => removeProfile(profile.id)}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg"
-            >
-              Excluir
-            </button>
-          </div>
-        ))}
+      {/* Perfis */}
+      <div className="flex gap-6">
+        {/* Perfil existente */}
+        <div className="flex flex-col items-center bg-neutral-900 rounded-xl p-6 shadow-md w-40">
+          <div className="text-5xl mb-2">😊</div>
+          <span className="mb-4">Novo perfil</span>
 
-        {/* Botão adicionar perfil */}
-        <div
-          onClick={addProfile}
-          className="bg-neutral-800 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-neutral-700"
-        >
-          <div className="text-6xl mb-4">＋</div>
-          <p className="text-lg">Adicionar perfil</p>
+          {/* Botões alinhados */}
+          <Link href="/catalog" className="btn w-full mb-2">
+            Entrar
+          </Link>
+          <button className="btn btn-neutral w-full mb-2">Editar</button>
+          <button className="btn btn-error w-full">Excluir</button>
+        </div>
+
+        {/* Adicionar perfil */}
+        <div className="flex flex-col items-center justify-center bg-neutral-900 rounded-xl p-6 shadow-md w-40 cursor-pointer">
+          <div className="text-5xl mb-2">＋</div>
+          <span>Adicionar perfil</span>
         </div>
       </div>
 
-      {/* Botão para vitrine */}
-      <button className="mt-12 px-6 py-3 bg-yellow-500 text-black font-bold rounded-lg">
-        Ir para a vitrine (sem perfil)
-      </button>
+      {/* CTA para vitrine sem perfil */}
+      <div className="mx-auto max-w-xs mt-8">
+        <Link href="/catalog" className="btn btn-warning w-full">
+          Ir para a vitrine (sem perfil)
+        </Link>
+      </div>
     </main>
   );
 }
